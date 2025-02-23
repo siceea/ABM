@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = getenv('DB_PASSWORD'); // Obtiene la contraseña desde la variable de entorno;
 $dbname = "sistema_altas_bajas";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
