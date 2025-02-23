@@ -8,9 +8,9 @@ if ($stmt) {
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            echo "ID: " . htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8') . 
-                 " - Nombre: " . htmlspecialchars($row["nombre"], ENT_QUOTES, 'UTF-8') . 
-                 " - Email: " . htmlspecialchars($row["email"], ENT_QUOTES, 'UTF-8') . 
+            echo "ID: " . htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8') .
+                 " - Nombre: " . htmlspecialchars($row["nombre"], ENT_QUOTES, 'UTF-8') .
+                 " - Email: " . htmlspecialchars($row["email"], ENT_QUOTES, 'UTF-8') .
                  " - Fecha de Registro: " . htmlspecialchars($row["fecha_registro"], ENT_QUOTES, 'UTF-8') . "<br>";
         }
     } else {
