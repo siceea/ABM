@@ -1,24 +1,43 @@
 <?php
-include 'db_connect.php';
-
+include_once 'db_connect.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = $_POST['id'];
-    $nombre = $_POST['nombre'];
-    $email = $_POST['email'];
+    if (isset($_POST['id'], $_POST['nombre'], $_POST['email']) && is_numeric($_POST['id'])) {
+        $id = intval($_POST['id']);
+        $nombre = htmlspecialchars(trim($_POST['nombre']), ENT_QUOTES, 'UTF-8');
+        $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
 
-    $sql = "UPDATE usuarios SET nombre='$nombre', email='$email' WHERE id=$id";
-
-    if ($conn->query($sql) === TRUE) {
-        echo "Registro actualizado exitosamente";
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            die("Error: Correo electrónico no válido");
+        }
+        $sql = "UPDATE usuarios SET nombre = ?, email = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssi", $nombre, $email, $id);
+        if ($stmt->execute()) {
+            echo "Registro actualizado exitosamente";
+        } else {
+            echo "Error al actualizar el registro.";
+        }
+        $stmt->close();
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Datos no válidos";
     }
 }
 
-$id = $_GET['id'];
-$sql = "SELECT * FROM usuarios WHERE id=$id";
-$result = $conn->query($sql);
-$row = $result->fetch_assoc();
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $sql = "SELECT * FROM usuarios WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    if (!$row) {
+        die("Usuario no encontrado");
+    }
+    $stmt->close();
+} else {
+    die("ID no válido");
+}
 ?>
 
 <form method="POST" action="update.php">
